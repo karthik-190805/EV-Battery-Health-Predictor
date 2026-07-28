@@ -1,0 +1,36 @@
+# Gradle generated files
+.gradle/
+build/
+**/.gradle/
+**/build/
+
+# Compiled files
+*.class
+*.jar
+*.war
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# MATLAB generated files
+slprj/
+sccprj/
+codegen/
+*.slxc
+*.autosave
+
+# Temporary and system files
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secret files
+.env
+.env.*
+*.key
+*.pem
