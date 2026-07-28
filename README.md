@@ -115,8 +115,6 @@ The complete project follows this process:
 
 ## System Architecture
 
-## System Architecture
-
 ```mermaid
 flowchart TD
 
