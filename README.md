@@ -115,37 +115,283 @@ The complete project follows this process:
 
 ## System Architecture
 
+## System Architecture
+
+```mermaid
+flowchart TD
+
+    A[Battery Chemistry Selection] --> B[Battery Chemistry Limits]
+
+    B --> C[SOC Generator]
+    B --> D[Temperature Generator]
+
+    C --> E[SOC Stress]
+    D --> F[Temperature Stress]
+
+    E --> G[Cycle Generator]
+    F --> G
+
+    G --> H[SOH Estimator]
+    H --> I[RUL Estimator]
+    I --> J[Health Classification]
+    J --> K[Alarm Generation]
+    K --> L[Data Collector]
+    L --> M[Excel Dataset and Dashboard]
+```
+
+## Battery Parameters
+
+The system processes the following battery parameters:
+<div align="center">
+    
+| Parameter | Description |
+|:---:|:---:|
+| Chemistry ID | Numerical identification of the battery chemistry |
+| Chemistry Name | LFP, NMC or NCA |
+| SOC Minimum | Minimum State-of-Charge operating value |
+| SOC Maximum | Maximum State-of-Charge operating value |
+| Average Temperature | Average battery operating temperature |
+| Maximum Temperature | Highest battery operating temperature |
+| Cycle Count | Number of charge and discharge cycles |
+| SOC Stress | Stress caused by operation outside the recommended SOC limits |
+| Temperature Stress | Stress caused by high or abnormal temperature |
+| SOH | Current usable battery capacity compared with its original condition |
+| RUL | Estimated remaining useful battery life |
+| Health Status | Good, Warning or End of Life |
+| Alarm Status | Indicates an abnormal or unsafe operating condition |
+</div>
+---
+
+## Battery Chemistry Specifications
+
+### Lithium Iron Phosphate — LFP
+<div align="center">
+    
+| Parameter | Recommended Range |
+|:---:|:---:|
+| Chemistry ID | 1 |
+| Minimum SOC | Approximately 10% to 20% |
+| Maximum SOC | Approximately 90% to 100% |
+| Average Temperature | Approximately 10°C to 35°C |
+| Maximum Temperature | Approximately 45°C to 50°C |
+| Expected Cycle Life | Approximately 3,000 to 7,000+ cycles |
+</div>
+
+### Nickel Manganese Cobalt — NMC
+<div align="center">
+    
+| Parameter | Recommended Range |
+|:---:|:---:|
+| Chemistry ID | 2 |
+| Minimum SOC | Approximately 20% |
+| Maximum SOC | Approximately 80% to 90% |
+| Average Temperature | Approximately 15°C to 35°C |
+| Maximum Temperature | Approximately 45°C to 50°C |
+| Expected Cycle Life | Approximately 1,000 to 2,000 cycles |
+</div>
+
+### Nickel Cobalt Aluminium — NCA
+<div align="center">
+    
+| Parameter | Recommended Range |
+|:---:|:---:|
+| Chemistry ID | 3 |
+| Minimum SOC | Approximately 20% |
+| Maximum SOC | Approximately 80% to 90% |
+| Average Temperature | Approximately 20°C to 35°C |
+| Maximum Temperature | Approximately 45°C to 50°C |
+| Expected Cycle Life | Approximately 500 to 1,500 cycles |
+</div>
+
+---
+
+## State of Health
+
+State of Health represents the present usable battery capacity compared with the battery's original capacity.
+
+A higher SOH indicates a healthier battery, while a lower SOH indicates greater battery degradation.
+
+The SOH estimator uses inputs such as:
+
+- Battery chemistry
+- SOC stress
+- Temperature stress
+- Battery cycle count
+- Battery degradation constants
+
+The estimated SOH is presented as a percentage.
+
+---
+
+## SOH Classification
+
+The project classifies battery health using the following limits:
+<div align="center">
+    
+| SOH Value | Battery Status |
+|:---:|:---:|
+| Above 80% | Good |
+| 70% to 80% | Warning |
+| Below 70% | End of Life |
+</div>
+
+The classification helps users understand the battery condition without requiring detailed technical knowledge.
+
+---
+
+## Remaining Useful Life
+
+Remaining Useful Life estimates how long the battery can continue operating before reaching the end of its effective lifetime.
+
+The RUL estimator considers:
+
+- Current SOH
+- Battery chemistry
+- Total expected battery cycle life
+- Current cycle count
+- Temperature conditions
+- Remaining cycle factor
+- Chemistry-specific nominal life
+
+RUL prediction can help users:
+
+- Plan battery maintenance
+- Schedule battery replacement
+- Reduce unexpected battery failure
+- Improve battery reliability
+- Reduce vehicle downtime
+
+---
+
+## Alarm Generation
+
+The alarm generator continuously checks important battery parameters.
+
+An alarm may be generated when:
+
+- SOH falls below the permitted value
+- SOC exceeds the recommended limits
+- Battery temperature exceeds the safe limit
+- Battery health reaches the Warning condition
+- Battery health reaches End of Life
+- Other abnormal operating conditions are detected
+
+The alarm system supports early warning and preventive maintenance.
+
+---
+
+## Dataset Generation
+
+The battery dataset is generated using MATLAB and Simulink.
+
+The model generates approximately 25,000 simulation samples with different:
+
+- Battery chemistries
+- SOC conditions
+- Temperature conditions
+- Battery cycle counts
+- SOH values
+- RUL values
+- Health classifications
+- Alarm conditions
+
+The generated data is exported into Microsoft Excel.
+
+Dataset location:
+
 ```text
-Battery Chemistry Selection
-            │
-            ▼
-Battery Chemistry Limits
-            │
-            ├───────────────┐
-            ▼               ▼
-     SOC Generator    Temperature Generator
-            │               │
-            ▼               ▼
-      SOC Stress      Temperature Stress
-            │               │
-            └───────┬───────┘
-                    ▼
-             Cycle Generator
-                    │
-                    ▼
-              SOH Estimator
-                    │
-                    ▼
-              RUL Estimator
-                    │
-                    ▼
-            Health Classification
-                    │
-                    ▼
-             Alarm Generation
-                    │
-                    ▼
-              Data Collector
-                    │
-                    ▼
-        Excel Dataset and Dashboard
+Dataset/Battery_Dataset.xlsx
+```
+
+The dataset contains columns such as:
+
+```text
+Chemistry_ID
+Chemistry_Name
+SOC_Min_Low
+SOC_Max_High
+AvgTemp
+MaxTemp
+Cycles
+SOH
+Health_Status_Code
+Health_Status
+RUL
+Alarm_Final
+```
+
+The dataset can be used for:
+
+- Battery health prediction
+- Machine-learning training
+- Battery classification
+- Degradation analysis
+- SOH prediction
+- RUL prediction
+- Predictive-maintenance research
+
+---
+
+## Machine-Learning Approach
+
+The project documentation demonstrates a Random Forest and decision-tree-based classification approach.
+
+The main input parameters used for classification include:
+
+- Average SOC
+- Battery temperature
+- Battery cycle count
+
+The target classes are:
+<div align="center">
+    
+| Class Code | Battery Condition |
+|:---:|:---:|
+| 1 | Good |
+| 2 | Warning |
+| 3 | End of Life |
+</div>
+
+Decision-tree split calculations are demonstrated using Mean Squared Error and sample battery data.
+
+The current system provides a structured foundation for the future development of a complete trained and validated machine-learning model.
+
+---
+
+## Web Dashboard
+
+The EV Battery Analytics Dashboard displays battery information for LFP, NMC and NCA chemistries.
+
+The dashboard displays:
+
+- State of Health
+- Remaining Useful Life
+- Battery health status
+- Battery chemistry
+- Temperature values
+- Battery cycle count
+- Degradation trend
+- Warning status
+- Alarm condition
+- Chemistry comparison
+- SOH calculator
+
+The dashboard converts complex battery information into understandable numerical values, indicators and graphs.
+
+---
+
+## Technologies Used
+<div align="center">
+    
+| Technology | Purpose |
+|:---:|:---:|
+| MATLAB | Battery calculations and data processing |
+| Simulink | Battery-condition simulation and dataset generation |
+| Microsoft Excel | Dataset storage and analysis |
+| Java | Web application and backend development |
+| Gradle | Project build and dependency management |
+| HTML | Dashboard page structure |
+| CSS | Dashboard styling |
+| Random Forest | Battery-health classification concept |
+| Decision Tree | Battery-status prediction and manual calculation |
+</div>
