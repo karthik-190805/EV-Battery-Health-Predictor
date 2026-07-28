@@ -137,6 +137,8 @@ flowchart TD
     L --> M[Excel Dataset and Dashboard]
 ```
 
+---
+
 ## Battery Parameters
 
 The system processes the following battery parameters:
@@ -158,6 +160,7 @@ The system processes the following battery parameters:
 | Health Status | Good, Warning or End of Life |
 | Alarm Status | Indicates an abnormal or unsafe operating condition |
 </div>
+
 ---
 
 ## Battery Chemistry Specifications
@@ -393,3 +396,5 @@ The dashboard converts complex battery information into understandable numerical
 | Random Forest | Battery-health classification concept |
 | Decision Tree | Battery-status prediction and manual calculation |
 </div>
+
+---
